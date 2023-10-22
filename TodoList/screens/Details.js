@@ -1,11 +1,14 @@
 import { StyleSheet, Text, View, Button, TextInput, Image } from 'react-native';
 import React from 'react';
 import * as ImagePicker from 'expo-image-picker';
+import { DateTimePickerAndroid } from '@react-native-community/datetimepicker';
 
 export default function Details({navigation, route}) {
   const [title, onChangeTitle] = React.useState(route.params.title);
   const [desc, onChangeDesc] = React.useState(route.params.desc);
   const [image, onChangeImage] = React.useState(route.params.image);
+  const [date, onChangeDateString] = React.useState(route.params.date);
+  const [dateDate, setDate] = React.useState(new Date);
 
   const listNum = route.params.listNum;
   const del = true;
@@ -19,12 +22,23 @@ export default function Details({navigation, route}) {
       quality: 1,
     });
 
-    console.log(result);
-
     if (!result.canceled) {
       onChangeImage(result.assets[0].uri);
-      console.log(image);
     }
+  }
+
+  const changeDate = (event, selectedDate) => {
+    const currentDate = selectedDate;
+    setDate(currentDate);
+    onChangeDateString(currentDate.toLocaleDateString());
+  }
+
+  const showDatePicker = () => {
+    DateTimePickerAndroid.open({
+      value: dateDate,
+      onChange: changeDate,
+      mode: 'date',
+    })
   }
   
   return (
@@ -46,6 +60,11 @@ export default function Details({navigation, route}) {
           onChangeText={onChangeDesc}
           />
       </View>
+      <View style={styles.dateContainer}>
+        <Text>Date</Text>
+        {date && <Text>{date}</Text>}
+        <Button onPress={showDatePicker} title="Change Date"></Button>
+      </View>
       {image && <Image source={{ uri: image }} style={{ width: 200, height: 200 }} />}
       <Button 
         title='Change Image'
@@ -53,11 +72,7 @@ export default function Details({navigation, route}) {
       />
       <Button 
         title='Save'
-        onPress={() => navigation.navigate("Todo List", {title, desc, image, listNum})}
-      />
-      <Button 
-        title='delete'
-        onPress={() => navigation.navigate("Todo List", {title, desc, listNum, del})}
+        onPress={() => navigation.navigate("Todo List", {title, desc, date, image, listNum})}
       />
     </View>
   );
@@ -89,5 +104,15 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     marginTop: 20,
+  },
+  dateContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    width: '80%',
+    paddingLeft: 25,
+    backgroundColor: 'white',
+    borderRadius: 10,
+
   }
 });

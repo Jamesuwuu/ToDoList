@@ -10,10 +10,10 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 const NOTES_STORE_KEY = '@notes';
 
 export default function List({navigation, route}) {
-  const {title, desc, image, listNum, del} = route.params ?? {};
+  const {title, desc, date, image, listNum, del} = route.params ?? {};
   const [list, setList] = React.useState([]);
 
-  useEffect(() => {if(title && desc) {
+  useEffect(() => {if(title || desc || date || image) {
     if (del) {
       setList(
         list.filter(a =>
@@ -23,14 +23,14 @@ export default function List({navigation, route}) {
     }
     else {
       if (listNum == null) {
-        setList((prevList) => [...prevList, {title, desc, image}]);
+        setList((prevList) => [...prevList, {title, desc, date, image}]);
       }
       else {
         editList(listNum);
       }
     }
   } },
-  [title, desc, image]);
+  [title, desc, date, image]);
 
   useEffect(() => {
     const getList = async () => {
@@ -51,7 +51,7 @@ export default function List({navigation, route}) {
   function editList(index) {
     const newList = list.map((old, i) => {
       if (index == i) {
-        return {title, desc, image};
+        return {title, desc, date, image};
       }
       else {
         return old;
@@ -63,8 +63,8 @@ export default function List({navigation, route}) {
   return (
     <View style={styles.container}>
       {
-        list.map(({title, desc, image}, index) => (
-          <Todo title={title} desc={desc} image={image} navigation={navigation} key={index} listNum={index}/>
+        list.map(({title, desc, date, image}, index) => (
+          <Todo title={title} desc={desc} date={date} image={image} navigation={navigation} key={index} listNum={index}/>
         ))
       }
       <Pressable style={styles.button} onPress={() => navigation.navigate("Add Todo")}>

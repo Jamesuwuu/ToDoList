@@ -2,14 +2,17 @@ import { StyleSheet, Text, View, Button, Pressable, Image } from 'react-native';
 
 const del = true;
 
-export default function Todo({title, desc, image, navigation, listNum}) {
+export default function Todo({title, desc, date, image, navigation, listNum}) {
   return (
-    <Pressable style={styles.container} onPress={() => navigation.navigate("Details", {title, desc, image, listNum})}>
-      <View style={styles.todoContainer}>
-        {image && <Image source={{ uri: image }} style={styles.image} />}
-        {
-          image ? <Text style={styles.header}>{title}</Text> : <Text style={styles.header2}>{title}</Text>
-        }
+    <Pressable style={styles.container} onPress={() => navigation.navigate("Details", {title, desc, date, image, listNum})}>
+      <View style={styles.verticalContainer}>
+        <View style={styles.todoContainer}>
+          {image && <Image source={{ uri: image }} style={styles.image} />}
+          {
+            image ? <Text style={styles.header}>{title}</Text> : <Text style={styles.header2}>{title}</Text>
+          }
+        </View>
+        {date && <Text style={styles.date}>{date}</Text>}
       </View>
       <Pressable style={styles.completeButton}  onPress={() => navigation.navigate("Todo List", {title, desc, listNum, del})}>
       </Pressable>
@@ -37,10 +40,16 @@ const styles = StyleSheet.create({
     marginLeft: 70,
     fontSize: 24,
   },
+  date: {
+    marginLeft: 70,
+  },
   todoContainer: {
     flexDirection: 'row',
     gap: 10,
     alignItems: 'center',
+  },
+  verticalContainer: {
+    gap: 10,
   },
   image: {
     height: 60,
